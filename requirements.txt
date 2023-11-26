@@ -1,0 +1,5 @@
+PyQT6
+attrs
+bs4
+requests
+unidecode
