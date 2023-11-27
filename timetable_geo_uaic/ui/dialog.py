@@ -1,13 +1,18 @@
-import os
+from pathlib import Path
 
+from PyQt6 import uic
+from PyQt6.QtGui import (
+    QIcon
+)
 from PyQt6.QtWidgets import (
     QDialog,
 )
-from PyQt6 import uic
 
 
 
-UI = os.path.join(os.path.dirname(__file__), 'main.ui')
+CWD = Path(__file__).resolve().parent
+UI = (CWD / 'main.ui').as_posix()
+ICON = (CWD / 'icon.png').as_posix()
 
 
 class Main(QDialog):
@@ -16,4 +21,5 @@ class Main(QDialog):
     def __init__(self):
         super(Main, self).__init__()
         uic.loadUi(UI, self)
+        self.setWindowIcon(QIcon(ICON))
         

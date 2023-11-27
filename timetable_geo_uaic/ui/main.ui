@@ -6,22 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>714</height>
+    <width>1189</width>
+    <height>723</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Orar</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QFrame" name="frameFilters">
        <property name="minimumSize">
         <size>
-         <width>250</width>
-         <height>0</height>
+         <width>300</width>
+         <height>351</height>
         </size>
        </property>
        <property name="frameShape">
@@ -30,192 +30,190 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <widget class="QComboBox" name="comboBoxGroup">
-        <property name="geometry">
-         <rect>
-          <x>11</x>
-          <y>34</y>
-          <width>191</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="placeholderText">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QLabel" name="labelGroup">
-        <property name="geometry">
-         <rect>
-          <x>11</x>
-          <y>11</y>
-          <width>221</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Grupa</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="labelProfessor">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>77</y>
-          <width>221</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Profesor</string>
-        </property>
-       </widget>
-       <widget class="QComboBox" name="comboBoxProfessor">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>100</y>
-          <width>191</width>
-          <height>22</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLabel" name="labelRoom">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>147</y>
-          <width>221</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Sală</string>
-        </property>
-       </widget>
-       <widget class="QComboBox" name="comboBoxRoom">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>170</y>
-          <width>191</width>
-          <height>22</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLabel" name="labelSubject">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>217</y>
-          <width>221</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Materie</string>
-        </property>
-       </widget>
-       <widget class="QComboBox" name="comboBoxSubject">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>240</y>
-          <width>191</width>
-          <height>22</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButtonResetGroup">
-        <property name="geometry">
-         <rect>
-          <x>210</x>
-          <y>34</y>
-          <width>41</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Reset</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButtonResetProfessor">
-        <property name="geometry">
-         <rect>
-          <x>210</x>
-          <y>100</y>
-          <width>41</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Reset</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButtonResetRoom">
-        <property name="geometry">
-         <rect>
-          <x>210</x>
-          <y>170</y>
-          <width>41</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Reset</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButtonResetSubject">
-        <property name="geometry">
-         <rect>
-          <x>210</x>
-          <y>240</y>
-          <width>41</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Reset</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButtonDownloadTimetable">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>660</y>
-          <width>251</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Descarcă tabelul</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="checkBoxCheckOverlaps">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>280</y>
-          <width>151</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Verifică suprapuneri</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelGroup">
+          <property name="text">
+           <string>Grupa</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QComboBox" name="comboBoxGroup">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonResetGroup">
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Reset</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelProfessor">
+          <property name="text">
+           <string>Profesor</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QComboBox" name="comboBoxProfessor">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonResetProfessor">
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Reset</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="labelRoom">
+          <property name="text">
+           <string>Sală</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QComboBox" name="comboBoxRoom">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonResetRoom">
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Reset</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="labelSubject">
+          <property name="text">
+           <string>Materie</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QComboBox" name="comboBoxSubject">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonResetSubject">
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Reset</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="8" column="0">
+         <widget class="QCheckBox" name="checkBoxCheckOverlaps">
+          <property name="text">
+           <string>Verifică suprapuneri</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="0">
+         <widget class="QPushButton" name="pushButtonDownloadTimetable">
+          <property name="text">
+           <string>Descarcă tabelul</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
-      <widget class="QTableWidget" name="tableWidgetMain">
-       <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustToContents</enum>
+      <widget class="QFrame" name="frame">
+       <property name="minimumSize">
+        <size>
+         <width>301</width>
+         <height>341</height>
+        </size>
        </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::NoSelection</enum>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
        </property>
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="0" column="1">
+    <widget class="QTableWidget" name="tableWidgetMain">
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

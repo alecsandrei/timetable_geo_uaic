@@ -59,6 +59,13 @@ class Groups(UserList):
             self.sort()
 
 
+    def __contains__(self, group: Group | str) -> bool:
+        if isinstance(group, str):
+            group = Group(group)
+        belonging_groups = self.get_belonging_groups(group=group)
+        return any(x in self.names for x in belonging_groups.names)
+
+
     @property
     def names(self) -> list[str]:
         return [group.name for group in self.data]
@@ -68,12 +75,12 @@ class Groups(UserList):
         self.data.sort(key=lambda x: x.name)
 
 
-    def get_belonging_groups(self, group: Group) -> tuple[Group]:
+    def get_belonging_groups(self, group: Group) -> Groups:
         """Returns the belonging aggregates of a group as a Groups object.
-        For example, for GM22 it returns a Groups object containing Group objects
+        For example, for GM22 it returns another Groups object containing Group objects
         of GM2, GM221, GM222."""
         if not isinstance(group, Group):
-            return []
+            raise ValueError('Provide a Group object as argument.')
         groups = [group]
         for aggregate in self:
             if not aggregate.aggregate:
@@ -111,6 +118,12 @@ class Professors(UserList):
             self.sort()
 
 
+    def __contains__(self, professor: Professor | str) -> bool:
+        if isinstance(professor, str):
+            return professor in self.names
+        return professor.name in self.names
+
+
     @property
     def names(self) -> list[str]:
         return [professor.name for professor in self.data]
@@ -146,6 +159,13 @@ class Rooms(UserList):
         if self.sort_values and self.data:
             self.sort()
 
+
+    def __contains__(self, room: Room | str) -> bool:
+        if isinstance(room, str):
+            return room in self.names
+        return room.name in self.names
+    
+
     @property
     def names(self) -> list[str]:
         return [room.name for room in self.data]
@@ -162,8 +182,31 @@ class Rooms(UserList):
 
 @define
 class Subject:
-    """This object describes a University subject."""
+    """This object describes an University subject."""
     name: str
+    timetable_name: str = field(init=False)
+    categories: list[str] = field(init=False, factory=list)
+
+    def __attrs_post_init__(self):
+        self._set_timetable_name_from_name()
+        self._set_categories()
+
+
+    @staticmethod
+    def _split_braces(string: str) -> str:
+        """Splits the values of the 'categories' by the braces (e.g. an input of (F) will return F)."""
+        return re.split('( )', string)[0]
+
+
+    def _set_categories(self):
+        categories = re.findall(r'\(([^)]*)\)', self.timetable_name)
+        for match in categories:
+            self.categories.append(self._split_braces(match))
+
+
+    def _set_timetable_name_from_name(self):
+        self.timetable_name = re.match(r'^([^\(]+)', self.name).group(1).strip()
+
 
 
 @define(frozen=True)
@@ -171,6 +214,7 @@ class Subjects(UserList):
     data: list[Subject] = field(factory=list)
     sort_values: bool = True
     _names: list[str] = field(init=False)
+    _timetable_names: list[str] = field(init=False)
 
 
     def __attrs_post_init__(self) -> None:
@@ -178,10 +222,21 @@ class Subjects(UserList):
             self.sort()
 
 
+    def __contains__(self, subject: Subject | str) -> bool:
+        if isinstance(subject, str):
+            return subject in self.timetable_names
+        return subject.timetable_name in self.timetable_names
+
+
     @property
     def names(self) -> list[str]:
         return [subject.name for subject in self.data]
     
+
+    @property
+    def timetable_names(self) -> list[str]:
+        return sorted(list(set(subject.timetable_name for subject in self.data)))
+
 
     def sort(self) -> None:
         self.data.sort(key=lambda x: x.name)

@@ -7,7 +7,7 @@ from PyQt6.QtCore import (
 from PyQt6.QtGui import (
     QFontMetrics,
     QStandardItem,
-    QPalette
+    QPalette,
 )
 from PyQt6.QtWidgets import (
     QScrollArea,
@@ -18,7 +18,7 @@ from PyQt6.QtWidgets import (
     QCompleter,
     QTabWidget,
     QStyledItemDelegate,
-    QApplication
+    QApplication,
 )
 
 
@@ -38,7 +38,6 @@ def combobox_add_completer(combobox: QComboBox) -> None:
     combobox.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
     combobox.completer().setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
     combobox.setCurrentIndex(-1)
-    combobox.setCurrentText('Selectează')
 
 
 class ScrollLabel(QScrollArea):
@@ -156,18 +155,23 @@ class CheckableComboBox(QComboBox):
         self.killTimer(event.timerId())
         self.closeOnLineEditClick = False
 
+
     def updateText(self):
         texts = []
         for i in range(self.model().rowCount()):
-            if self.model().item(i).checkState() == Qt.Checked:
+            if self.model().item(i).checkState() == Qt.CheckState.Checked:
                 texts.append(self.model().item(i).text())
         text = ", ".join(texts)
 
         # Compute elided text (with "...")
         metrics = QFontMetrics(self.lineEdit().font())
-        elidedText = metrics.elidedText(text, Qt.ElideRight, self.lineEdit().width())
+        elidedText = metrics.elidedText(text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
         self.lineEdit().setText(elidedText)
 
+
+    def deselect_items(self):
+        for i in range(self.model().rowCount()):
+            self.model().item(i).setCheckState(Qt.CheckState.Unchecked)
 
     def addItem(self, text, data=None):
         item = QStandardItem()

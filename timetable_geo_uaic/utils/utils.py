@@ -9,8 +9,8 @@ from unidecode import unidecode
 from attrs import define, field
 from bs4 import Tag, ResultSet
 
-from timetable_geo_uaic.request import request_table
-from timetable_geo_uaic.objects import (
+from ..request import request_table
+from ..objects import (
     Weekday,
     TimeInterval,
     Group,

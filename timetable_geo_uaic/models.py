@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from collections import OrderedDict
 
 from attrs import define, field
 from PyQt6.QtWidgets import (
@@ -9,30 +9,26 @@ from PyQt6.QtWidgets import (
 )
 
 from ui.dialog import Main
-from objects import (
+from .objects import (
     Weekdays,
     TimeIntervals,
     Group,
-    Professor,
-    Room,
-    Subject,
     Groups,
     Professors,
     Rooms,
     Subjects,
     ObjectCreator
 )
-from timetable_geo_uaic.utils.pyqt_utils import (
+from .utils.pyqt_utils import (
     combobox_add_completer,
     create_scroll_label,
     create_tab_widget,
     CheckableComboBox
 )
-from timetable_geo_uaic.utils.utils import (
+from .utils.utils import (
     HTMLTableParser,
     HTMLElementsToJson,
     JsonToObjects,
-    get_attribute_name
 )
 
 
@@ -58,12 +54,12 @@ class VerticalTimeHorizontalDays:
     def __attrs_post_init__(self) -> None:
         self.ui.__init__()
         self.ui = Main()
-        # self.comboBox_lectures = {
-        #     'groups': self.ui.comboBoxGroup,
-        #     'professors': self.ui.comboBoxProfessor,
-        #     'rooms': self.ui.comboBoxRoom,
-        #     'subjects': self.ui.comboBoxSubject
-        # }
+        self.comboBox_lectures = OrderedDict(
+            groups=self.ui.comboBoxGroup,
+            professors=self.ui.comboBoxProfessor,
+            rooms=self.ui.comboBoxRoom,
+            subjects=self.ui.comboBoxSubject
+        )
         # Populate dialog
         self.load_table(download=False, update_table=False)
         self.style_tableWidgetMain_row_col_count()
@@ -74,10 +70,7 @@ class VerticalTimeHorizontalDays:
         self.style_comboBox_completer()
         self.update_tableWidgetMain()
         # Signals for comboboxes
-        self.ui.comboBoxGroup.activated.connect(self.update_tableWidgetMain)
-        self.ui.comboBoxProfessor.activated.connect(self.update_tableWidgetMain)
-        self.ui.comboBoxRoom.activated.connect(self.update_tableWidgetMain)
-        self.ui.comboBoxSubject.activated.connect(self.update_tableWidgetMain)
+        self.add_comboBox_signals()
         # Signals for push buttons
         self.ui.pushButtonDownloadTimetable.pressed.connect(self.load_table)
         self.ui.pushButtonResetGroup.pressed.connect(self.reset_comboBoxGroup)
@@ -85,7 +78,7 @@ class VerticalTimeHorizontalDays:
         self.ui.pushButtonResetRoom.pressed.connect(self.reset_comboBoxRoom)
         self.ui.pushButtonResetSubject.pressed.connect(self.reset_comboBoxSubject)
         # Signals for check box
-        # self.ui.checkBoxCheckOverlaps.stateChanged.connect(self.handle_checkBoxCheckOverlaps)
+        self.ui.checkBoxCheckOverlaps.stateChanged.connect(self.handle_checkBoxCheckOverlaps)
 
 
     @property
@@ -130,48 +123,16 @@ class VerticalTimeHorizontalDays:
         return self._subjects
 
 
-    @property
-    def comboBoxGroup_text_to_object(self) -> Group:
-        """Gets the current text in the combobox widget."""
-        text = self.ui.comboBoxGroup.currentText()
-        if text in self.groups.names:
-            return Group(str(text))
-    
-
-    @property
-    def comboBoxProfessor_text_to_object(self) -> Professor:
-        """Gets the current text in the combobox widget."""
-        text = self.ui.comboBoxProfessor.currentText()
-        if text in self.professors.names:
-            return Professor(str(text))
-    
-
-    @property
-    def comboBoxRoom_text_to_object(self) -> Room:
-        """Gets the current text in the combobox widget."""
-        text = self.ui.comboBoxRoom.currentText()
-        if text in self.rooms.names:
-            return Room(str(text))
-    
-
-    @property
-    def comboBoxSubject_text_to_object(self) -> Subject:
-        """Gets the current group in the combobox widget."""
-        text = self.ui.comboBoxSubject.currentText()
-        if text in self.subjects.names:
-            return Subject(str(text))
-
-
     @staticmethod
-    def filter_by_iterable_object(timetable: dict, objects: Iterable[type], timetable_key: str) -> dict:
+    def filter_by_iterable_object(timetable: dict, comboBox_lecture: str, timetable_key: str) -> dict:
         filtered = {}
         for weekday, intervals in timetable.items():
             filtered[weekday] = {k: {} for k in intervals}
             for interval, lectures in intervals.items():
                 filtered[weekday][interval] = {k: [] for k in lectures}
                 lecture_objects = lectures[timetable_key]
-                for i, object_ in enumerate(lecture_objects):
-                    if any(x.name in object_.names for x in objects):
+                for i, objects in enumerate(lecture_objects):
+                    if any(x in objects for x in comboBox_lecture):
                         filtered[weekday][interval]['groups'] += [lectures['groups'][i]]
                         filtered[weekday][interval]['professors'] += [lectures['professors'][i]]
                         filtered[weekday][interval]['rooms'] += [lectures['rooms'][i]]
@@ -189,35 +150,35 @@ class VerticalTimeHorizontalDays:
         self.creator = ObjectCreator(self.timetable)
         if update_table:
             self.update_tableWidgetMain()
+        
 
-
-    def comboBox_lectures_to_checkableComboBox(self):
-        pass
-
-
-    def checkableComboBox_lectures_to_comboBox(self):
-        pass
+    def convert_combobox_to(self, object_: QComboBox | CheckableComboBox):
+        layout = self.ui.frameFilters.layout()
+        for lecture_element, comboBox in self.comboBox_lectures.items():
+            self.comboBox_lectures[lecture_element] = object_()
+            layout.replaceWidget(comboBox, self.comboBox_lectures[lecture_element])
+            comboBox.close()
 
 
     def add_groups_to_comboBoxGroup(self) -> None:
         # only add non-aggretate type group to combobox
         items = [group.name for group in self.groups if not group.aggregate]
-        self.ui.comboBoxGroup.addItems(items)
+        self.comboBox_lectures['groups'].addItems(items)
         
 
     def add_professors_to_comboBoxProfessor(self) -> None:
         items = [professor.name for professor in self.professors]
-        self.ui.comboBoxProfessor.addItems(items)
+        self.comboBox_lectures['professors'].addItems(items)
 
 
     def add_rooms_to_comboBoxRoom(self) -> None:
         items = [room.name for room in self.rooms]
-        self.ui.comboBoxRoom.addItems(items)
+        self.comboBox_lectures['rooms'].addItems(items)
 
 
     def add_subjects_to_comboBoxSubject(self) -> None:
-        items = [group.name for group in self.subjects]
-        self.ui.comboBoxSubject.addItems(items)
+        items = sorted(list({subject.timetable_name for subject in self.subjects}))
+        self.comboBox_lectures['subjects'].addItems(items)
 
 
     def add_lecture_objects_to_comboBox(self) -> None:
@@ -227,23 +188,36 @@ class VerticalTimeHorizontalDays:
         self.add_subjects_to_comboBoxSubject()
 
 
+    def add_comboBox_signals(self):
+        for comboBox in self.comboBox_lectures.values():
+            comboBox.currentTextChanged.connect(self.update_tableWidgetMain)
+
+
     def reset_comboBoxGroup(self) -> None:
-        combobox_add_completer(self.ui.comboBoxGroup)
+        if isinstance(self.comboBox_lectures['groups'], CheckableComboBox):
+            self.comboBox_lectures['groups'].deselect_items()
+        combobox_add_completer(self.comboBox_lectures['groups'])
         self.update_tableWidgetMain()
 
 
     def reset_comboBoxProfessor(self) -> None:
-        combobox_add_completer(self.ui.comboBoxProfessor)
+        if isinstance(self.comboBox_lectures['professors'], CheckableComboBox):
+            self.comboBox_lectures['professors'].deselect_items()
+        combobox_add_completer(self.comboBox_lectures['professors'])
         self.update_tableWidgetMain()
 
 
     def reset_comboBoxRoom(self) -> None:
-        combobox_add_completer(self.ui.comboBoxRoom)
+        if isinstance(self.comboBox_lectures['rooms'], CheckableComboBox):
+            self.comboBox_lectures['rooms'].deselect_items()
+        combobox_add_completer(self.comboBox_lectures['rooms'])
         self.update_tableWidgetMain()
 
 
     def reset_comboBoxSubject(self) -> None:
-        combobox_add_completer(self.ui.comboBoxSubject)
+        if isinstance(self.comboBox_lectures['subjects'], CheckableComboBox):
+            self.comboBox_lectures['subjects'].deselect_items()
+        combobox_add_completer(self.comboBox_lectures['subjects'])
         self.update_tableWidgetMain()
 
 
@@ -262,10 +236,8 @@ class VerticalTimeHorizontalDays:
 
 
     def style_comboBox_completer(self) -> None:
-        combobox_add_completer(self.ui.comboBoxGroup)
-        combobox_add_completer(self.ui.comboBoxProfessor)
-        combobox_add_completer(self.ui.comboBoxRoom)
-        combobox_add_completer(self.ui.comboBoxSubject)
+        for comboBox in self.comboBox_lectures.values():
+            combobox_add_completer(comboBox)
 
 
     def add_weekdays_to_tableWidgetMain(self) -> None:
@@ -281,7 +253,7 @@ class VerticalTimeHorizontalDays:
             for r, interval in enumerate(self.time_intervals):
                 cell_widget_w_tabs = create_tab_widget()
                 self.ui.tableWidgetMain.setCellWidget(r, c, cell_widget_w_tabs)
-                for i, v in enumerate(filtered_timetable[day][interval].values()):
+                for v in filtered_timetable[day][interval].values():
                     if not v:
                         continue
                     for i, lecture in enumerate(v):
@@ -292,25 +264,29 @@ class VerticalTimeHorizontalDays:
                         label.setText(label.text() + text)
 
 
+    def get_comboBox_lectures_current_data(self) -> list[str] | None:
+        for combobox in self.comboBox_lectures.values():
+            if isinstance(combobox, CheckableComboBox):
+                yield combobox.currentData()
+            elif isinstance(combobox, QComboBox):
+                text = combobox.currentText()
+                yield [text] if text else None
+
+
     def update_tableWidgetMain(self) -> None:
-        group_object = [self.comboBoxGroup_text_to_object]
-        professor_object =  [self.comboBoxProfessor_text_to_object]
-        room_object = [self.comboBoxRoom_text_to_object]
-        subject_object = [self.comboBoxSubject_text_to_object]
         filtered_timetable = self.timetable.copy()
-        for objects, timetable_key in zip([group_object, professor_object, room_object, subject_object],
-                                          ['groups', 'professors', 'rooms', 'subjects']):
-            if None in objects:
+        for lecture_element, timetable_key in zip(self.get_comboBox_lectures_current_data(), self.comboBox_lectures):
+            if not lecture_element:
                 continue
-            if timetable_key == 'groups':
-                objects = self.groups.get_belonging_groups(objects[0])
-            filtered_timetable = self.filter_by_iterable_object(timetable=filtered_timetable, objects=objects, timetable_key=timetable_key)
-            print(filtered_timetable)
+            filtered_timetable = self.filter_by_iterable_object(timetable=filtered_timetable, comboBox_lecture=lecture_element, timetable_key=timetable_key)
         self.add_scroll_label_to_tableWidgetMain_cells(filtered_timetable=filtered_timetable)
+
 
     def handle_checkBoxCheckOverlaps(self) -> None:
         if self.ui.checkBoxCheckOverlaps.isChecked():
-            self.comboBox_lectures_to_checkableComboBox()
+            self.convert_combobox_to(object_=CheckableComboBox)
         else:
-            self.checkableComboBox_lectures_to_comboBox()
+            self.convert_combobox_to(object_=QComboBox)
         self.add_lecture_objects_to_comboBox()
+        self.add_comboBox_signals()
+        self.style_comboBox_completer()
