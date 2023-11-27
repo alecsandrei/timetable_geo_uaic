@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
     QComboBox,
 )
 
-from ui.dialog import Main
+from .ui.dialog import Main
 from .objects import (
     Weekdays,
     TimeIntervals,
