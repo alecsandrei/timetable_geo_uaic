@@ -1,4 +1,4 @@
-# Foobar
+# timetable_geo_uaic
 
 timetable-geo-uaic is a PyQt based app where the bachelor students and the university staff from the Faculty of Geography and Geology Iași can view their timetable.
 
