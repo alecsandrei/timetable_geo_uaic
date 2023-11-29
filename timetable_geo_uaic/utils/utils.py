@@ -23,6 +23,7 @@ from ..objects import (
     Subjects,
     ObjectCreator
 )
+from ..assets import TIMETABLE
 
 
 
@@ -179,7 +180,7 @@ class HTMLElementsToJson:
 
     @property
     def json_file_path(self) -> str:
-        return os.path.join(os.path.dirname(__file__), '../timetable.json')
+        return TIMETABLE
 
 
     @property

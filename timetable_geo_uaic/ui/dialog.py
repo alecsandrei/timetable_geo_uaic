@@ -8,11 +8,8 @@ from PyQt6.QtWidgets import (
     QDialog,
 )
 
+from ..assets import MAIN_UI, DIALOG_ICON
 
-
-CWD = Path(__file__).resolve().parent
-UI = (CWD / 'main.ui').as_posix()
-ICON = (CWD / 'icon.png').as_posix()
 
 
 class Main(QDialog):
@@ -20,6 +17,6 @@ class Main(QDialog):
 
     def __init__(self):
         super(Main, self).__init__()
-        uic.loadUi(UI, self)
-        self.setWindowIcon(QIcon(ICON))
+        uic.loadUi(MAIN_UI, self)
+        self.setWindowIcon(QIcon(DIALOG_ICON))
         
