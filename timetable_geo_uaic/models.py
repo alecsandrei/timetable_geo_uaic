@@ -26,6 +26,7 @@ from .utils.pyqt_utils import (
     CheckableComboBox
 )
 from .utils.utils import (
+    Table,
     HTMLTableParser,
     HTMLElementsToJson,
     JsonToObjects,
@@ -44,11 +45,6 @@ class VerticalTimeHorizontalDays:
     comboBox_lectures: dict[str, QComboBox] = field(init=False)
     _weekdays: Weekdays = field(init=False, default=None)
     _time_intervals: TimeIntervals = field(init=False, default=None)
-    _group: Group = field(init=False, default=None)
-    _groups: Groups = field(init=False, default=None)
-    _professors: Professors = field(init=False, default=None)
-    _rooms: Rooms = field(init=False, default=None)
-    _subjects: Subjects = field(init=False, default=None)
 
 
     def __attrs_post_init__(self) -> None:
@@ -97,31 +93,31 @@ class VerticalTimeHorizontalDays:
 
     @property
     def groups(self) -> Groups:
-        if self._groups is None:
-            self._groups = self.creator.get_all_unique(aggregate_object=Groups, timetable_key='groups')
-        return self._groups
+        return self.creator.get_all_unique(aggregate_object=Groups, timetable_key='groups')
     
 
     @property
     def professors(self) -> Professors:
-        if self._professors is None:
-            self._professors = self.creator.get_all_unique(aggregate_object=Professors, timetable_key='professors')
-        return self._professors
+        return self.creator.get_all_unique(aggregate_object=Professors, timetable_key='professors')
     
 
     @property
     def rooms(self) -> Rooms:
-        if self._rooms is None:
-            self._rooms = self.creator.get_all_unique(aggregate_object=Rooms, timetable_key='rooms')
-        return self._rooms
+        return self.creator.get_all_unique(aggregate_object=Rooms, timetable_key='rooms')
     
     
     @property
     def subjects(self) -> Subjects:
-        if self._subjects is None:
-            self._subjects = self.creator.get_all_unique(aggregate_object=Subjects, timetable_key='subjects')
-        return self._subjects
+        return self.creator.get_all_unique(aggregate_object=Subjects, timetable_key='subjects')
 
+
+    @property
+    def table_parser(self) -> Table:
+        years = self.ui.lineEditYears.text().strip()
+        semester = self.ui.lineEditSemester.text().strip()
+        if not years or not semester:
+            return Table()
+        return Table(years=years.split('-'), semester=semester)
 
     @staticmethod
     def filter_by_iterable_object(timetable: dict, comboBox_lecture: str, timetable_key: str) -> dict:
@@ -141,7 +137,7 @@ class VerticalTimeHorizontalDays:
 
 
     def load_table(self, download=True, update_table=True) -> None:
-        parser = HTMLTableParser()
+        parser = HTMLTableParser(table=self.table_parser)
         self.html_elements_to_json = HTMLElementsToJson(parser=parser)
         if download:
             self.html_elements_to_json.save_json()
@@ -150,6 +146,8 @@ class VerticalTimeHorizontalDays:
         self.creator = ObjectCreator(self.timetable)
         if update_table:
             self.update_tableWidgetMain()
+            self.add_lecture_objects_to_comboBox()
+            self.style_comboBox_completer()
         
 
     def convert_combobox_to(self, object_: QComboBox | CheckableComboBox):
@@ -181,7 +179,13 @@ class VerticalTimeHorizontalDays:
         self.comboBox_lectures['subjects'].addItems(items)
 
 
+    def clear_lecture_objects_from_comboBox(self) -> None:
+        for comboBox in self.comboBox_lectures.values():
+            comboBox.clear()
+
+
     def add_lecture_objects_to_comboBox(self) -> None:
+        self.clear_lecture_objects_from_comboBox() # first clear the contents of the comboboxes
         self.add_groups_to_comboBoxGroup()
         self.add_professors_to_comboBoxProfessor()
         self.add_rooms_to_comboBoxRoom()
@@ -257,7 +261,9 @@ class VerticalTimeHorizontalDays:
                     if not v:
                         continue
                     for i, lecture in enumerate(v):
-                        text = ', '.join(lecture.names) + '\n'
+                        text = ', '.join(lecture.names)
+                        if not isinstance(lecture, Subjects):
+                            text += '\n'
                         if cell_widget_w_tabs.count() < i+1:
                             cell_widget_w_tabs.addTab(create_scroll_label(), str(i))
                         label = cell_widget_w_tabs.widget(i)

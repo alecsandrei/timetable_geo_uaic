@@ -4,7 +4,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = '0.0.1'
+version = '0.0.2'
 description = 'A PyQt app where the bachelor students from the University "Alexandru Ioan Cuza" Iași, Faculty of Geography and Geology can view their timetable.'
 here = op.abspath(op.dirname(__file__))
 

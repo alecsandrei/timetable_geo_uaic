@@ -62,7 +62,7 @@ class ScrollLabel(QScrollArea):
         # adding label to the layout
         lay.addWidget(self.label)
 
-    # the setText method
+
     def setText(self, text) -> None:
         # setting text to the label
         self.label.setText(text)
@@ -81,16 +81,13 @@ class CheckableComboBox(QComboBox):
             size.setHeight(20)
             return size
 
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Make the combo editable to set a custom text, but readonly
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
-        # Make the lineedit the same color as QPushButton
-        palette = QApplication.palette()
-        palette.setColor(QPalette.ColorRole.Base, palette.color(QPalette.ColorRole.Button))
-        self.lineEdit().setPalette(palette)
 
         # Use custom delegate
         self.setItemDelegate(CheckableComboBox.Delegate())
@@ -172,6 +169,7 @@ class CheckableComboBox(QComboBox):
     def deselect_items(self):
         for i in range(self.model().rowCount()):
             self.model().item(i).setCheckState(Qt.CheckState.Unchecked)
+
 
     def addItem(self, text, data=None):
         item = QStandardItem()
