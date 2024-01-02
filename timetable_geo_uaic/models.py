@@ -194,7 +194,10 @@ class VerticalTimeHorizontalDays:
 
     def add_comboBox_signals(self):
         for comboBox in self.comboBox_lectures.values():
-            comboBox.currentTextChanged.connect(self.update_tableWidgetMain)
+            if isinstance(comboBox, CheckableComboBox):
+                comboBox.currentTextChanged.connect(self.update_tableWidgetMain)
+            elif isinstance(comboBox, QComboBox):
+                comboBox.activated.connect(self.update_tableWidgetMain)
 
 
     def reset_comboBoxGroup(self) -> None:
