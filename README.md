@@ -1,6 +1,12 @@
 # timetable_geo_uaic
 
+**EN**
+
 timetable-geo-uaic is a PyQt based app where the bachelor students and the university staff from the Faculty of Geography and Geology Iași can view their timetable.
+
+**RO**
+
+timetable-geo-uaic este o aplicație realizată în PyQt în care studenții și profesorii de la Facultatea de Geografie și Geologie pot vizualiza orarul ciclului de licență.
 
 ## Installation
 In order to be able to use all the features of the application, you should run it as an administrator.
